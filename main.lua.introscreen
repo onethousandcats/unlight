@@ -1,0 +1,97 @@
+-----------------------------------------------------------------------------------------
+--
+-- main.lua
+--
+-----------------------------------------------------------------------------------------
+
+local w = display.viewableContentWidth
+local h = display.viewableContentHeight
+
+local frame = {
+	container = display.newRect( 0, 0, w, h ),
+	reflectX = true,
+}
+
+display.setStatusBar( display.HiddenStatusbar )
+
+local openScreen = display.newGroup()
+
+local background = display.newImage("bg.png")
+openScreen:insert( background, true)
+background.x = 160; background.y = 240
+
+local titleScreen = display.newGroup()
+
+local title = display.newImage("logo.png")
+local touch = display.newImage("touch.png")
+local q = display.newImage("block.png")
+
+titleScreen:insert( title, true )
+titleScreen:insert( touch, true )
+titleScreen:insert( q, true )
+title.x = 160; title.y = 160;
+touch.x = 160; touch.y = 300;
+q.x = 160; q.y = 240;
+
+local alphaDec = .01
+local touchAlphaDec = .01
+local numParticles = 40
+local particleFile = "particle.png"
+
+--add particles
+for i=1, numParticles do
+	
+	local particle = display.newImage( particleFile )
+	
+	particle.x = math.random( 1, w )
+	particle.y = h + math.random( 5, 200 )
+	
+	particle.vx = math.random( -3, 3 )
+	particle.vy = math.random( -3, -1 )
+	
+	frame[ #frame + 1 ] = particle
+
+end
+
+local aStep = 0
+
+function frame:enterFrame( event )
+	for _,p in ipairs( frame ) do
+		
+		local newAlpha = p.alpha - alphaDec
+		
+		p:translate( p.vx, p.vy )
+		p.alpha = newAlpha
+		
+		if (p.y < 0) then
+			p.y = h + 50
+			p.x = math.random( 1, w )
+			p.vx = math.random( -3, 3 )
+			p.vy = math.random( -10, -1 )
+			p.alpha = 1
+		end
+		
+		if ( aStep == 5000 ) then
+			touchAlphaDec = touchAlphaDec * -1
+			aStep = 0
+			print( touchAlphaDec )
+			print( aStep )
+		end
+		
+		aStep = aStep + 1
+	end
+	
+	touch.alpha = touch.alpha - touchAlphaDec
+	
+	if ( aStep == 5000 ) then
+		touchAlphaDec = touchAlphaDec * -1
+		aStep = 0
+		print( touchAlphaDec )
+		print( aStep )
+	end
+		
+	aStep = aStep + 1
+end
+
+Runtime:addEventListener( "enterFrame", frame )
+
