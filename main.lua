@@ -96,7 +96,6 @@ local levelComplete = false;
 local removeComplete = false;
 
 local alphaDec = .01
-local touchAlphaDec = .02
 local numParticles = 40
 local particleFile = "particle.png"
 
@@ -126,7 +125,16 @@ for i=1, numParticles do
 
 end
 
-local blink
+local blink, remove, removeAndContinue
+
+function remove ( obj )
+	obj:removeSelf();
+end
+
+function remove ( obj )
+	obj:removeSelf();
+	titleComplete = true;
+end
 
 function blink ( obj )
 	if ( obj.alpha == 1 ) then		
@@ -220,12 +228,10 @@ local function restartLevel ( event )
 		for row = 1, rowsize do
 			for col = 1, colsize do
 				
-				print( lvlArray[lvl].sub(row + (col - 1) * rowsize, row + (col - 1) * rowsize + 1) )
-				
 				if (lvlArray[lvl]:sub(row + (col - 1) * rowsize, row + (col - 1) * rowsize) == "1") then
-					board[(row - 1) * rowsize + col].alpha = 1
+					transition.to(board[(row - 1) * rowsize + col], { time = 1500, alpha = 1 } )
 				else
-					board[(row - 1) * rowsize + col].alpha = .2
+					transition.to(board[(row - 1) * rowsize + col], { time = 1500, alpha = .2 } )
 				end
 						
 			end
@@ -242,12 +248,10 @@ local function nextLevel ( event )
 	for row = 1, rowsize do
 		for col = 1, colsize do
 			
-			print( lvlArray[lvl].sub(row + (col - 1) * rowsize, row + (col - 1) * rowsize + 1) )
-			
 				if (lvlArray[lvl]:sub(row + (col - 1) * rowsize, row + (col - 1) * rowsize) == "1") then
-					board[(row - 1) * rowsize + col].alpha = 1
+					transition.to(board[(row - 1) * rowsize + col], { time = 1500, alpha = 1 } )
 				else
-					board[(row - 1) * rowsize + col].alpha = .2
+					transition.to(board[(row - 1) * rowsize + col], { time = 1500, alpha = .2 } )
 				end
 
 		end
@@ -269,12 +273,12 @@ local function createBoard()
 			b.x = (col-1) * bw / rowsize + pan
 			b.y = top + (row-1) * bw / colsize + pan
 			
-			print( lvlArray[lvl].sub(row + (col - 1) * rowsize, row + (col - 1) * rowsize + 1) )
-			
+			b.alpha = 0
+
 			if (lvlArray[lvl]:sub(row + (col - 1) * rowsize, row + (col - 1) * rowsize) == "1") then
-				b.alpha = 1
+				transition.to(b, { time = 1500, alpha = 1 } )
 			else
-				b.alpha = .2
+				transition.to(b, { time = 1500, alpha = .2 } )
 			end
 			
 			--b.width = bw; b.height = bh;
@@ -329,20 +333,19 @@ function frame:enterFrame( event )
 	end
 	
 	--check for gameplay
-	if removeTitle == true then
-		q:rotate(1)
-		q.y = q.y - 3
-		title.alpha = title.alpha - .01
-		touchAlphaDec = .01
+	--if removeTitle == true then
+		--q:rotate(1)
+		--q.y = q.y - 3
+		--title.alpha = title.alpha - .01
 		
-		if q.y < -30 then
-			q:removeSelf()
-			touch:removeSelf()
-			titleComplete = true;
-			removeTitle = false;
-		end
+		--if q.y < -30 then
+		--	q:removeSelf()
+			
+		--	titleComplete = true;
+		--	removeTitle = false;
+		--end
 		
-	end
+	--end
 	
 	if head.alpha < 1 and titleComplete == true then
 		head.alpha = head.alpha + .01
@@ -404,11 +407,10 @@ end
 
 local function onTouch ( event )
 	if ( event.phase == "began" ) then
-		transition.to( touch, { time = 2000, alpha = 0 } )
-		removeTitle = true;
+		transition.to( touch, { time = 2000, alpha = 0, onComplete = remove } )
+		transition.to( q, { time = 2000, rotation = 90, y = -30, onComplete = remove } )
+		transition.to( title, { time = 2000, alpha = 0, onComplete = removeAndContinue })
 	end
-	
-	print (event.phase)
 end
 
 local function newGameClicked ( event )
