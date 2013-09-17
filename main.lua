@@ -57,21 +57,21 @@ title.x = 160; title.y = 160;
 touch.x = 160; touch.y = 300;
 q.x = 160; q.y = 240;
 
-local head = display.newImage("logoblk.png")		
+local head = display.newImage("block.png")		
 titleScreen:insert( head , true )
-head.x = 60; head.y = 50; head.alpha = 0;
+head.x = w / 2; head.y = 120; head.alpha = 0;
 
 local new = display.newImage("newgame.png")		
 titleScreen:insert( new , true )
-new.x = 220; new.y = 200; new.alpha = 0;
+new.x = w / 2; new.y = 230; new.alpha = 0;
 
 local tut = display.newImage("tut.png")		
 titleScreen:insert( tut , true )
-tut.x = 220; tut.y = 250; tut.alpha = 0;
+tut.x = w / 2; tut.y = 280; tut.alpha = 0;
 
 local highs = display.newImage("highscores.png")		
 titleScreen:insert( highs , true )
-highs.x = 220; highs.y = 300; highs.alpha = 0;
+highs.x = w / 2; highs.y = 330; highs.alpha = 0;
 
 local restart = display.newImage("restart.png")		
 titleScreen:insert( restart , true )
@@ -194,7 +194,8 @@ local function blockTouch ( event )
 		
 		if (lights == 0) then
 			levelComplete = true;
-			removeComplete = false
+			lvl = lvl + 1;
+			removeComplete = false;
 			createClouds();
 		end
 	end
@@ -202,8 +203,19 @@ end
 
 local function restartLevel ( event )
 	if ( event.phase == "began" ) then
-		for _,b in ipairs( board ) do
-			b.alpha = 1;
+
+		for row = 1, rowsize do
+			for col = 1, colsize do
+				
+				print( lvlArray[lvl].sub(row + (col - 1) * rowsize, row + (col - 1) * rowsize + 1) )
+				
+				if (lvlArray[lvl]:sub(row + (col - 1) * rowsize, row + (col - 1) * rowsize) == "1") then
+					board[(row - 1) * rowsize + col].alpha = 1
+				else
+					board[(row - 1) * rowsize + col].alpha = .2
+				end
+						
+			end
 		end
 	end
 end
@@ -212,8 +224,20 @@ local function nextLevel ( event )
 	removeClouds()
 	removeComplete = true;
 
-	for _,b in ipairs( board ) do
-		b.alpha = 1;
+	local row; local col;
+	
+	for row = 1, rowsize do
+		for col = 1, colsize do
+			
+			print( lvlArray[lvl].sub(row + (col - 1) * rowsize, row + (col - 1) * rowsize + 1) )
+			
+				if (lvlArray[lvl]:sub(row + (col - 1) * rowsize, row + (col - 1) * rowsize) == "1") then
+					board[(row - 1) * rowsize + col].alpha = 1
+				else
+					board[(row - 1) * rowsize + col].alpha = .2
+				end
+
+		end
 	end
 	
 	restartRot = true
@@ -325,6 +349,8 @@ function frame:enterFrame( event )
 		restartRot = true;
 		gameStarted = true;
 	end
+
+	head:rotate(3)
 	
 	if (restartRot == true) then
 		restart:rotate(1)
