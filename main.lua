@@ -46,14 +46,16 @@ background.width = w; background.height = h;
 
 local titleScreen = display.newGroup()
 
-local title = display.newImage("logo.png")
-local touch = display.newImage("touch.png")
+--local title = display.newImage("logo.png")
+local title = display.newText("unlight", w / 2, 160, "Infinity", 72)
+--local touch = display.newImage("touch.png")
+local touch = display.newText("touch to start", 160, 300, "Infinity", 24)
 local q = display.newImage("block.png")
 
 titleScreen:insert( title, true )
 titleScreen:insert( touch, true )
 titleScreen:insert( q, true )
-title.x = 160; title.y = 160;
+title.x = 160; title.y = 160; 
 touch.x = 160; touch.y = 300; touch.alpha = 0;
 q.x = 160; q.y = 240;
 
@@ -61,15 +63,18 @@ local head = display.newImage("block.png")
 titleScreen:insert( head , true )
 head.x = w / 2; head.y = 120; head.alpha = 0;
 
-local new = display.newImage("newgame.png")		
+--local new = display.newImage("newgame.png")		
+local new = display.newText("new game", w / 2, 230, "Infinity", 36)
 titleScreen:insert( new , true )
 new.x = w / 2; new.y = 230; new.alpha = 0;
 
-local tut = display.newImage("tut.png")		
+--local tut = display.newImage("tut.png")		
+local tut = display.newText("tutorial", 160, 300, "Infinity", 36)
 titleScreen:insert( tut , true )
 tut.x = w / 2; tut.y = 280; tut.alpha = 0;
 
-local highs = display.newImage("highscores.png")		
+--local highs = display.newImage("highscores.png")
+local highs = display.newText("high scores", 160, 300, "Infinity", 36)		
 titleScreen:insert( highs , true )
 highs.x = w / 2; highs.y = 330; highs.alpha = 0;
 
@@ -77,7 +82,7 @@ local restart = display.newImage("restart.png")
 titleScreen:insert( restart , true )
 restart.x = 30; restart.y = 60; restart.alpha = 0;
 
-local lvlTxt = display.newText( lvl / 10 + 1, w - 60, 40, native.systemFont, 24)
+local lvlTxt = display.newText( lvl / 10 + 1, w - 70, 50, "Infinity", 24)
 lvlTxt.alpha = 0;
 
 local complete = display.newImage("complete.png")		
