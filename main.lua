@@ -54,7 +54,7 @@ titleScreen:insert( title, true )
 titleScreen:insert( touch, true )
 titleScreen:insert( q, true )
 title.x = 160; title.y = 160;
-touch.x = 160; touch.y = 300;
+touch.x = 160; touch.y = 300; touch.alpha = 0;
 q.x = 160; q.y = 240;
 
 local head = display.newImage("block.png")		
@@ -77,6 +77,9 @@ local restart = display.newImage("restart.png")
 titleScreen:insert( restart , true )
 restart.x = 30; restart.y = 60; restart.alpha = 0;
 
+local lvlTxt = display.newText( lvl / 10 + 1, w - 60, 40, native.systemFont, 24)
+lvlTxt.alpha = 0;
+
 local complete = display.newImage("complete.png")		
 titleScreen:insert( complete , true )
 complete.x = w / 2; complete.y = h / 2; complete.alpha = 0;
@@ -97,7 +100,6 @@ local touchAlphaDec = .02
 local numParticles = 40
 local particleFile = "particle.png"
 
-
 local numClouds = 600
 local cloudFile = "cloud.png"
 
@@ -107,8 +109,6 @@ local pan = 65
 local bw = w - 80;
 local bh = h - 80;
 local top = (bh - bw) / 2
-
---local debug = display.newText( "debug", 20, 20, "Helvetica", 16 )
 
 --add particles
 for i=1, numParticles do
@@ -125,6 +125,19 @@ for i=1, numParticles do
 	frame[ #frame + 1 ] = particle
 
 end
+
+local blink
+
+function blink ( obj )
+	if ( obj.alpha == 1 ) then		
+		transition.to( obj, { time = 2000, alpha = 0, onComplete = blink })
+	else
+		transition.to( obj, { time = 2000, alpha = 1, onComplete = blink })
+	end
+end
+
+--main screen setup
+transition.to( touch, { time = 2000, alpha = 0, onComplete = blink })
 
 local function toggle ( b )
 	if ( b.alpha == .2 ) then
@@ -242,6 +255,7 @@ local function nextLevel ( event )
 	
 	restartRot = true
 	levelComplete = false
+	transition.to( lvlTxt, { time = 500, delay = 0, alpha = 1 })
 	
 end
 
@@ -386,31 +400,16 @@ function frame:enterFrame( event )
 		complete.alpha = complete.alpha - .03
 	end
 	
-	if (titleComplete == false) then
-		
-		if (touch.alpha <= 1 and touch.alpha >= 0) then
-			touch.alpha = touch.alpha - touchAlphaDec
-		end
-		
-		if ( aStep == 100 and removeTitle == false ) then
-			touchAlphaDec = touchAlphaDec * -1
-			aStep = 0
-		end
-		
-		aStep = aStep + 1
-	
-	end
-	
 end
 
 local function onTouch ( event )
 	if ( event.phase == "began" ) then
+		transition.to( touch, { time = 2000, alpha = 0 } )
 		removeTitle = true;
 	end
 	
 	print (event.phase)
 end
-q:addEventListener("touch", onTouch )
 
 local function newGameClicked ( event )
 	if ( event.phase == "began" ) then
@@ -420,7 +419,6 @@ local function newGameClicked ( event )
 	
 	print (event.phase)
 end
-new:addEventListener("touch", newGameClicked )
 
 local function showTutorials ( event )
 	if ( event.phase == "began" ) then
@@ -428,7 +426,6 @@ local function showTutorials ( event )
 		print("tutorial")
 	end
 end
-tut:addEventListener("touch", showTutorials )
 
 local function showHighScores ( event )
 	if ( event.phase == "began" ) then
@@ -436,6 +433,13 @@ local function showHighScores ( event )
 		print("scores")
 	end
 end
+
+q:addEventListener("touch", onTouch )
+
+new:addEventListener("touch", newGameClicked )
+
+tut:addEventListener("touch", showTutorials )
+
 highs:addEventListener("touch", showHighScores )
 
 Runtime:addEventListener( "enterFrame", frame )
