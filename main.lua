@@ -23,11 +23,6 @@ local frame = {
 	reflectX = true,
 }
 
-local cloudFrame = {
-	container = display.newRect( 0, 0, w, h ),
-	reflectX = true,
-}
-
 local board = {
 	container = display.newRect( 0, 0, w, h),
 	reflectX = true,
@@ -39,7 +34,15 @@ local openScreen = display.newGroup()
 
 local lvl = 1
 
-local background = display.newImage("bg.png")
+--local background = display.newImage("bg.png")
+local g = graphics.newGradient(
+	{ 156, 250, 232 },
+	{ 77, 144, 208 },
+	"up"
+	)
+
+local background = display.newRect(0, 0, w, h)
+background:setFillColor(g)
 openScreen:insert( background, true)
 background.x = 160; background.y = 240
 background.width = w; background.height = h;
@@ -85,7 +88,8 @@ restart.x = 30; restart.y = 60; restart.alpha = 0;
 local lvlTxt = display.newText( lvl / 10 + 1, w - 70, 50, "Infinity", 24)
 lvlTxt.alpha = 0;
 
-local complete = display.newImage("complete.png")		
+--local complete = display.newImage("complete.png")		
+local complete = display.newText( "level complete", w / 2, h / 2, "Infinity", 42)
 titleScreen:insert( complete , true )
 complete.x = w / 2; complete.y = h / 2; complete.alpha = 0;
 
@@ -103,9 +107,6 @@ local removeComplete = false;
 local alphaDec = .01
 local numParticles = 40
 local particleFile = "particle.png"
-
-local numClouds = 600
-local cloudFile = "cloud.png"
 
 local rowsize = 5
 local colsize = 5
@@ -136,9 +137,16 @@ function remove ( obj )
 	obj:removeSelf();
 end
 
-function remove ( obj )
+function removeAndContinue ( obj )
 	obj:removeSelf();
-	titleComplete = true;
+	
+	--show options
+	transition.to( new, { time = 1400, alpha = 1 })
+	transition.to( tut, { time = 1400, alpha = 1 })
+	transition.to( highs, { time = 1400, alpha = 1 })
+	transition.to( head, { time = 1400, alpha = 1 })
+
+
 end
 
 function blink ( obj )
@@ -157,30 +165,6 @@ local function toggle ( b )
 		b.alpha = 1
 	else
 		b.alpha = .2
-	end
-end
-
-local function createClouds()
-	for i=1, numClouds do
-		
-		local c = display.newImage( cloudFile )
-		openScreen:insert(c)
-		
-		c.x = math.random( 1, w )
-		c.y = math.random( h, h + 20 )
-		
-		c.vx = math.random( -3, 3 )
-		c.vy = math.random( -10, -1 )
-		
-		cloudFrame[ #cloudFrame + 1 ] = c
-
-	end
-end
-
-local function removeClouds()
-	for _,p in ipairs( cloudFrame ) do
-		p.x = 10000
-		p.vy = 1
 	end
 end
 
@@ -219,10 +203,14 @@ local function blockTouch ( event )
 		end
 		
 		if (lights == 0) then
-			levelComplete = true;
 			lvl = lvl + 1;
-			removeComplete = false;
-			createClouds();
+
+			for _,b in ipairs( board ) do
+				transition.to( b, { time = 1200, alpha = 0 })
+			end
+
+			transition.to( lvlTxt, { time = 1000, alpha = 0 })
+			transition.to( complete, { time = 1000, alpha = 1 })
 		end
 	end
 end
@@ -243,10 +231,11 @@ local function restartLevel ( event )
 		end
 	end
 end
+restart:addEventListener( "touch", restartLevel )
 
 local function nextLevel ( event )
-	removeClouds()
-	removeComplete = true;
+
+	transition.to( complete, { time = 1200, alpha = 0 })
 
 	local row; local col;
 	
@@ -262,11 +251,12 @@ local function nextLevel ( event )
 		end
 	end
 	
-	restartRot = true
-	levelComplete = false
+	lvlTxt.text = lvl / 10 + 1
 	transition.to( lvlTxt, { time = 500, delay = 0, alpha = 1 })
 	
 end
+
+complete:addEventListener( "touch", nextLevel )
 
 local function createBoard()
 	
@@ -274,7 +264,9 @@ local function createBoard()
 	
 	for row = 1, rowsize do
 		for col = 1, colsize do
-			local b = display.newImage("blocksmall.png")
+			--local b = display.newImage("blocksmall.png")
+			local b = display.newRect(0, 0, 34, 34)
+
 			b.x = (col-1) * bw / rowsize + pan
 			b.y = top + (row-1) * bw / colsize + pan
 			
@@ -288,7 +280,9 @@ local function createBoard()
 			
 			--b.width = bw; b.height = bh;
 			b:addEventListener( "touch", blockTouch )
-			board[ #board + 1 ] = b			
+			board[ #board + 1 ] = b
+
+			transition.to( lvlTxt, { time = 500, delay = 0, alpha = 1 })			
 		end
 	end
 
@@ -297,6 +291,7 @@ end
 local aStep = 0
 
 function frame:enterFrame( event )
+	
 	for _,p in ipairs( frame ) do
 		
 		local newAlpha = p.alpha - alphaDec
@@ -316,97 +311,9 @@ function frame:enterFrame( event )
 		end
 		
 	end
-	
-	for _,p in ipairs( cloudFrame ) do
-		
-		local newAlpha = p.alpha - alphaDec
-		
-		p:translate( p.vx, p.vy )
-		
-		if (p.alpha > 0 and p.y < h ) then
-			p.alpha = newAlpha
-		end
-		
-		if (p.y < 0 and p.x < 300) then
-			p.y = h + 50
-			p.x = math.random( 1, w )
-			p.vx = math.random( -3, 3 )
-			p.vy = math.random( -10, -1 )
-			p.alpha = 1
-		end
-		
-	end
-	
-	--check for gameplay
-	--if removeTitle == true then
-		--q:rotate(1)
-		--q.y = q.y - 3
-		--title.alpha = title.alpha - .01
-		
-		--if q.y < -30 then
-		--	q:removeSelf()
-			
-		--	titleComplete = true;
-		--	removeTitle = false;
-		--end
-		
-	--end
-	
-	if head.alpha < 1 and titleComplete == true then
-		head.alpha = head.alpha + .01
-		new.alpha = new.alpha + .01
-		tut.alpha = tut.alpha + .01
-		highs.alpha = highs.alpha + .01
-	end
-	
-	if head.alpha > 0 and (newGame == true or showTut == true or showScores == true) then
-		head.alpha = head.alpha - .02
-		new.alpha = new.alpha - .02
-		tut.alpha = tut.alpha - .03
-		highs.alpha = highs.alpha - .04
-	end
-	
-	if head.alpha <= 0 and newGame == true and gameStarted == false then
-		createBoard()
-		restartRot = true;
-		gameStarted = true;
-	end
 
 	head:rotate(3)
-	
-	if (restartRot == true) then
-		restart:rotate(1)
-		restart:addEventListener( "touch", restartLevel )
-		
-		if (restart.alpha <= 1) then
-			restart.alpha = restart.alpha + .02
-		end
-		
-	end
-	
-	if (levelComplete == true) then
-		if ( complete.alpha < 1 ) then
-			complete.alpha = complete.alpha + .01
-		end
-		
-		if ( levelComplete == true and restart.alpha > 0 ) then
-			restart.alpha = restart.alpha - .02
-		end
-		
-		for _,b in ipairs( board ) do
-			if (b.alpha > 0) then b.alpha = b.alpha - .01 end
-		end
-		
-		restartRot = false;
-		
-		complete:addEventListener( "touch", nextLevel )
-		
-
-	end
-	
-	if (removeComplete == true) then
-		complete.alpha = complete.alpha - .03
-	end
+	restart:rotate(1)
 	
 end
 
@@ -420,8 +327,11 @@ end
 
 local function newGameClicked ( event )
 	if ( event.phase == "began" ) then
-		newGame = true;
-		print("new game")
+		transition.to( new, { time = 1200, alpha = 0 })
+		transition.to( tut, { time = 1200, alpha = 0 })
+		transition.to( highs, { time = 1200, alpha = 0 })
+		transition.to( head, { time = 1200, alpha = 0, onComplete = createBoard })
+		transition.to( restart, { time = 1200, alpha = 1 })
 	end
 	
 	print (event.phase)
