@@ -54,6 +54,7 @@ local title = display.newText("unlight", w / 2, 160, "Infinity", 72)
 --local touch = display.newImage("touch.png")
 local touch = display.newText("touch to start", 160, 300, "Infinity", 24)
 local q = display.newImage("block.png")
+--local q = display.newRect(0, 0, 60, 60)
 
 titleScreen:insert( title, true )
 titleScreen:insert( touch, true )
@@ -89,7 +90,7 @@ local lvlTxt = display.newText( lvl / 10 + 1, w - 70, 50, "Infinity", 24)
 lvlTxt.alpha = 0;
 
 --local complete = display.newImage("complete.png")		
-local complete = display.newText( "level complete", w / 2, h / 2, "Infinity", 42)
+local complete = display.newText( "stage complete", w / 2, h / 2, "Infinity", 42)
 titleScreen:insert( complete , true )
 complete.x = w / 2; complete.y = h / 2; complete.alpha = 0;
 
