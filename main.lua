@@ -45,6 +45,7 @@ local openScreen = display.newGroup()
 
 local savedLvl = tonumber(info[1])
 local lvl = 1
+local theme = "light"
 
 local g = graphics.newGradient(
 	{ 156, 250, 232 },
@@ -104,6 +105,22 @@ menu.alpha = 0; menu.x = w / 2;
 local complete = display.newText( "stage complete", w / 2, h / 2, "Infinity", 42)
 titleScreen:insert( complete , true )
 complete.x = w / 2; complete.y = h / 2; complete.alpha = 0;
+
+-----------------------------------------------------------
+
+local theme = display.newText("theme", w / 2, 230, "Infinity", 36)
+titleScreen:insert( theme , true )
+theme.x = w / 2; theme.y = 210; theme.alpha = 0;
+
+local sounds = display.newText("sounds", 160, 300, "Infinity", 36)
+titleScreen:insert( sounds , true )
+sounds.x = w / 2; sounds.y = theme.y + 50; sounds.alpha = 0;
+
+local ret = display.newText("return", 160, 300, "Infinity", 36)		
+titleScreen:insert( ret , true )
+ret.x = w / 2; ret.y = sounds.y + 50; ret.alpha = 0;
+
+-----------------------------------------------------------
 
 local removeTitle = false;
 local titleComplete = false;
@@ -447,6 +464,37 @@ local function newGameClicked ( event )
 	end
 end
 
+local function returnToMenu ( event )
+
+end
+
+local function changeTheme ( event )
+	if ( event.phase == "began" ) then
+		if (theme == "light") then
+			theme = "dark"
+			print (theme)
+			local g = graphics.newGradient(
+				{ 142, 23, 0 },
+				{ 255, 166, 50 },
+				"up"
+			)
+
+			background:setFillColor(g)
+
+		else
+			theme = "light"
+
+			local g = graphics.newGradient(
+				{ 156, 250, 232 },
+				{ 77, 144, 208 },
+				"up"
+			)
+
+			background:setFillColor(g)
+		end
+	end
+end
+
 local function continueClicked ( event )
 	if ( event.phase == "began" ) then
 
@@ -467,13 +515,26 @@ end
 
 local function showTutorials ( event )
 	if ( event.phase == "began" ) then
-
+		transition.to( cont, { time = 1200, alpha = 0 })
+		transition.to( new, { time = 1200, alpha = 0 })
+		transition.to( tut, { time = 1200, alpha = 0 })
+		transition.to( settings, { time = 1200, alpha = 0 })
+		transition.to( head, { time = 1200, alpha = 0 })
 	end
 end
 
 local function showSettings ( event )
 	if ( event.phase == "began" ) then
+		transition.to( cont, { time = 1200, alpha = 0 })
+		transition.to( new, { time = 1200, alpha = 0 })
+		transition.to( tut, { time = 1200, alpha = 0 })
+		transition.to( settings, { time = 1200, alpha = 0 })
 
+		transition.to( head, { time = 1000, y = 100 })
+
+		transition.to( theme, { time = 1000, alpha = 1 })
+		transition.to( sounds, { time = 1200, alpha = 1 })
+		transition.to( ret, { time = 1200, alpha = 1 })
 	end
 end
 
@@ -495,4 +556,8 @@ restart:addEventListener( "touch", restartLevel )
 
 menu:addEventListener("touch", goToMenu )
 
+-------------------------------------------------
 
+ret:addEventListener("touch", returnToMenu )
+
+theme:addEventListener("touch", changeTheme )
