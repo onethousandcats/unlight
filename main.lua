@@ -16,6 +16,18 @@ end
 
 io.close(f)
 
+local tutPath = system.pathForFile( "tutorial.txt" )
+
+local tf = io.open( tutPath, "r" )
+
+local tutArray = {}
+
+for line in tf:lines() do
+	tutArray[ #tutArray + 1 ] = line
+end
+
+io.close(tf)
+
 local currentInfo = system.pathForFile( "current.txt" )
 
 local cur = io.open( currentInfo, "r" )
@@ -45,13 +57,22 @@ local openScreen = display.newGroup()
 
 local savedLvl = tonumber(info[1])
 local lvl = 1
-local theme = "light"
+local tutLvl = 1
+local theme = info[2]
 
 local g = graphics.newGradient(
 	{ 156, 250, 232 },
 	{ 77, 144, 208 },
 	"up"
 )
+
+if ( theme == "dark" ) then
+	g = graphics.newGradient(
+		{ 142, 23, 0 },
+		{ 255, 166, 50 },
+		"up"
+	)
+end
 
 local background = display.newRect(0, 0, w, h)
 background:setFillColor(g)
@@ -108,13 +129,13 @@ complete.x = w / 2; complete.y = h / 2; complete.alpha = 0;
 
 -----------------------------------------------------------
 
-local theme = display.newText("theme", w / 2, 230, "Infinity", 36)
-titleScreen:insert( theme , true )
-theme.x = w / 2; theme.y = 210; theme.alpha = 0;
+local thm = display.newText("theme", w / 2, 230, "Infinity", 36)
+titleScreen:insert( thm , true )
+thm.x = w / 2; thm.y = 210; thm.alpha = 0;
 
 local sounds = display.newText("sounds", 160, 300, "Infinity", 36)
 titleScreen:insert( sounds , true )
-sounds.x = w / 2; sounds.y = theme.y + 50; sounds.alpha = 0;
+sounds.x = w / 2; sounds.y = thm.y + 50; sounds.alpha = 0;
 
 local ret = display.newText("return", 160, 300, "Infinity", 36)		
 titleScreen:insert( ret , true )
@@ -237,7 +258,8 @@ local function blockTouch ( event )
 
 			--record level in log
 			local f = io.open( currentInfo, "w" )
-			f:write( lvl )
+			f:write( lvl, "\n" )
+			f:write( theme )
 
 			io.close( f )
 			f = nil
@@ -465,15 +487,27 @@ local function newGameClicked ( event )
 end
 
 local function returnToMenu ( event )
+	if ( event.phase == "began" ) then
+		transition.to( thm, { time = 500, delay = 0, alpha = 0 })	
+		transition.to( sounds, { time = 500, delay = 0, alpha = 0 })	
+		transition.to( ret, { time = 500, delay = 0, alpha = 0 })
 
+		if ( savedLvl > 0 ) then transition.to( cont, { time = 1400, alpha = 1 }) end
+		transition.to( new, { time = 1400, alpha = 1 })
+		transition.to( tut, { time = 1400, alpha = 1 })
+		transition.to( settings, { time = 1400, alpha = 1 })
+
+		transition.to( head, { time = 1000, y = 120 })
+	end
 end
 
 local function changeTheme ( event )
 	if ( event.phase == "began" ) then
+
 		if (theme == "light") then
 			theme = "dark"
-			print (theme)
-			local g = graphics.newGradient(
+
+			g = graphics.newGradient(
 				{ 142, 23, 0 },
 				{ 255, 166, 50 },
 				"up"
@@ -484,7 +518,7 @@ local function changeTheme ( event )
 		else
 			theme = "light"
 
-			local g = graphics.newGradient(
+			g = graphics.newGradient(
 				{ 156, 250, 232 },
 				{ 77, 144, 208 },
 				"up"
@@ -492,6 +526,17 @@ local function changeTheme ( event )
 
 			background:setFillColor(g)
 		end
+
+		background:setFillColor(g)
+
+		--record level in log
+		local f = io.open( currentInfo, "w" )
+		f:write( lvl, "\n" )
+		f:write( theme )
+
+		io.close( f )
+		f = nil
+
 	end
 end
 
@@ -513,6 +558,42 @@ local function continueClicked ( event )
 	end
 end
 
+local function tutBoard ( event )
+
+	if ( event.phase == "began" ) then
+		
+		transition.to( event.target, { time = 1200, alpha = 0 })
+
+		local tb = {}
+
+		for row = 1, 3 do
+			for col = 1, 3 do
+
+				local b = display.newRect(0, 0, 34, 34)
+
+				b.x = (col-1) * bw / rowsize + pan + 50
+				b.y = top + (row-1) * bw / colsize + pan + 50
+				
+				b.alpha = 0
+
+				local ca = 0
+
+				if (tutArray[tutLvl]:sub(row + (col - 1) * 3, row + (col - 1) * 3) == "1") then
+					ca = 1
+				else
+					ca = .2
+				end
+
+				transition.to(b, { time = 1500, alpha = ca } )
+
+				tb[ #tb + 1 ] = b
+		
+			end
+		end
+
+	end
+end
+
 local function showTutorials ( event )
 	if ( event.phase == "began" ) then
 		transition.to( cont, { time = 1200, alpha = 0 })
@@ -520,6 +601,19 @@ local function showTutorials ( event )
 		transition.to( tut, { time = 1200, alpha = 0 })
 		transition.to( settings, { time = 1200, alpha = 0 })
 		transition.to( head, { time = 1200, alpha = 0 })
+
+		local intro = display.newText("welcome to unlight", w / 2, h / 2, "Infinity", 32, "center" )
+		intro.alpha = 0; intro.x = w / 2;
+
+		transition.to( intro, { time = 1800, alpha = 1 })
+		transition.to( intro, { time = 1800, delay = 2000, alpha = 0 })
+
+		local goal = display.newText("the goal is to turn off all of the lights", w / 2, h / 2, "Infinity", 24, "center" )
+		goal.alpha = 0; goal.x = w / 2;
+
+		transition.to( goal, { time = 1800, delay = 4000, alpha = 1 })
+		goal:addEventListener( "touch", tutBoard )
+
 	end
 end
 
@@ -532,7 +626,7 @@ local function showSettings ( event )
 
 		transition.to( head, { time = 1000, y = 100 })
 
-		transition.to( theme, { time = 1000, alpha = 1 })
+		transition.to( thm, { time = 1000, alpha = 1 })
 		transition.to( sounds, { time = 1200, alpha = 1 })
 		transition.to( ret, { time = 1200, alpha = 1 })
 	end
@@ -560,4 +654,4 @@ menu:addEventListener("touch", goToMenu )
 
 ret:addEventListener("touch", returnToMenu )
 
-theme:addEventListener("touch", changeTheme )
+thm:addEventListener("touch", changeTheme )
