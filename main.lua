@@ -62,9 +62,9 @@ local tutLvl = 1
 local theme = info[2]
 
 local g = graphics.newGradient(
-	{ 156, 250, 232 },
+	{ 133, 215, 199 },
 	{ 77, 144, 208 },
-	"up"
+	"down"
 )
 
 if ( theme == "dark" ) then
@@ -522,7 +522,7 @@ local function changeTheme ( event )
 			g = graphics.newGradient(
 				{ 156, 250, 232 },
 				{ 77, 144, 208 },
-				"up"
+				"down"
 			)
 
 			background:setFillColor(g)
@@ -562,18 +562,22 @@ end
 local function tutorialSecondPuzzle ( event )
 	if ( event.phase == "began" ) then
 		
+        transition.to( event.target, { time = 1000, alpha = 0 })
+
 		tutLvl = tutLvl + 1
 
-		for _,b in ipairs( tb ) do
-			local ca = 0
+		for row = 1, 3 do
+			for col = 1, 3 do
+				local ca = 0
 
-			if (tutArray[tutLvl]:sub(row + (col - 1) * 3, row + (col - 1) * 3) == "1") then
-				ca = 1
-			else
-				ca = .2
+				if (tutArray[tutLvl]:sub(row + (col - 1) * 3, row + (col - 1) * 3) == "1") then
+					ca = 1
+				else
+					ca = .2
+				end
+
+				transition.to(tb[(row - 1) * 3 + col], { time = 1500, alpha = ca } )
 			end
-
-			transition.to(b, { time = 1500, alpha = ca } )
 		end
 	end
 end
@@ -586,10 +590,10 @@ local function tutorialFirstPuzzle ( event )
 			transition.to( b, { time = 1000, alpha = 0, delay = 600 })
 		end
 
-		local comp = display.newText("well done, now try this one", w / 2, h / 2, "Infinity", 24, "center" )
+		local comp = display.newText("good, now try this one", w / 2, h / 2, "Infinity", 32, "center" )
 		comp.alpha = 0; comp.x = w / 2;
 
-		transition.to( comp, { time = 1800, delay = 4000, alpha = 1 })
+		transition.to( comp, { time = 1800, delay = 2000, alpha = 1 })
 		comp:addEventListener( "touch", tutorialSecondPuzzle )
 
 	end
@@ -647,7 +651,7 @@ local function showTutorials ( event )
 		transition.to( intro, { time = 1800, alpha = 1 })
 		transition.to( intro, { time = 1800, delay = 2000, alpha = 0 })
 
-		local goal = display.newText("the goal is to turn off all of the lights", w / 2, h / 2, "Infinity", 24, "center" )
+		local goal = display.newText("turn off all of the lights", w / 2, h / 2, "Infinity", 32, "center" )
 		goal.alpha = 0; goal.x = w / 2;
 
 		transition.to( goal, { time = 1800, delay = 4000, alpha = 1 })
