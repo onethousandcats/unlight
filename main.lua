@@ -15,6 +15,16 @@ for line in f:lines() do
 	print( line )
 end
 
+local currentInfo = system.pathForFile( "current.txt" )
+
+local cur = io.open( currentInfo, "r" )
+
+local info = {}
+
+for line in f:lines() do 
+	info[ #info + 1 ] = line
+end
+
 local w = display.viewableContentWidth
 local h = display.viewableContentHeight
 
@@ -70,17 +80,17 @@ head.x = w / 2; head.y = 120; head.alpha = 0;
 --local new = display.newImage("newgame.png")		
 local new = display.newText("new game", w / 2, 230, "Infinity", 36)
 titleScreen:insert( new , true )
-new.x = w / 2; new.y = 230; new.alpha = 0;
+new.x = w / 2; new.y = 260; new.alpha = 0;
 
 --local tut = display.newImage("tut.png")		
 local tut = display.newText("tutorial", 160, 300, "Infinity", 36)
 titleScreen:insert( tut , true )
-tut.x = w / 2; tut.y = 280; tut.alpha = 0;
+tut.x = w / 2; tut.y = new.y + 50; tut.alpha = 0;
 
---local highs = display.newImage("highscores.png")
-local highs = display.newText("high scores", 160, 300, "Infinity", 36)		
-titleScreen:insert( highs , true )
-highs.x = w / 2; highs.y = 330; highs.alpha = 0;
+--local settings = display.newImage("highscores.png")
+local settings = display.newText("settings", 160, 300, "Infinity", 36)		
+titleScreen:insert( settings , true )
+settings.x = w / 2; settings.y = tut.y + 50; settings.alpha = 0;
 
 local restart = display.newImage("restart.png")		
 titleScreen:insert( restart , true )
@@ -144,10 +154,8 @@ function removeAndContinue ( obj )
 	--show options
 	transition.to( new, { time = 1400, alpha = 1 })
 	transition.to( tut, { time = 1400, alpha = 1 })
-	transition.to( highs, { time = 1400, alpha = 1 })
+	transition.to( settings, { time = 1400, alpha = 1 })
 	transition.to( head, { time = 1400, alpha = 1 })
-
-
 end
 
 function blink ( obj )
@@ -171,6 +179,7 @@ end
 
 local function blockTouch ( event )
 	if ( event.phase == "began" ) then
+
 		local b = event.target
 		bx = (event.target.x - pan) * rowsize / bw + 1
 		by = (event.target.y - top - pan) * colsize / bw + 1
@@ -200,11 +209,19 @@ local function blockTouch ( event )
 		local lights = 0
 		--check endgame
 		for _,b in ipairs( board ) do
-			if (b.alpha == 1) then lights = lights + 1 end
+			if (b.alpha > .2) then lights = lights + 1 end
 		end
 		
 		if (lights == 0) then
-			lvl = lvl + 1;
+
+			--level is completed successfully
+
+			--record level in log
+			local f = io.open( currentInfo, "w" )
+			f:write( lvl )
+
+			io.close( f )
+			f = nil
 
 			for _,b in ipairs( board ) do
 				transition.to( b, { time = 1200, alpha = 0 })
@@ -219,6 +236,10 @@ end
 local function restartLevel ( event )
 	if ( event.phase == "began" ) then
 
+		for _,b in ipairs( board ) do
+			b:removeEventListener( "touch", blockTouch )
+		end
+
 		for row = 1, rowsize do
 			for col = 1, colsize do
 				
@@ -230,42 +251,62 @@ local function restartLevel ( event )
 						
 			end
 		end
+
+		for _,b in ipairs( board ) do
+			b:addEventListener( "touch", blockTouch )
+		end
+
 	end
 end
-restart:addEventListener( "touch", restartLevel )
 
 local function nextLevel ( event )
+	if ( event.phase == "began" ) then
 
-	transition.to( complete, { time = 1200, alpha = 0 })
+		for _,b in ipairs( board ) do
+			b:removeEventListener( "touch", blockTouch )
+		end
 
-	local row; local col;
-	
-	for row = 1, rowsize do
-		for col = 1, colsize do
-			
+		transition.to( complete, { time = 1200, alpha = 0 })
+		lvl = lvl + 1;
+		
+		local row; local col;
+		
+		for row = 1, rowsize do
+			for col = 1, colsize do
 				if (lvlArray[lvl]:sub(row + (col - 1) * rowsize, row + (col - 1) * rowsize) == "1") then
 					transition.to(board[(row - 1) * rowsize + col], { time = 1500, alpha = 1 } )
 				else
 					transition.to(board[(row - 1) * rowsize + col], { time = 1500, alpha = .2 } )
 				end
-
+			end
 		end
+		
+		for _,b in ipairs( board ) do
+			b:addEventListener( "touch", blockTouch )
+		end
+
+		lvlTxt.text = lvl / 10 + 1
+		transition.to( lvlTxt, { time = 500, delay = 0, alpha = 1 })
+
 	end
-	
-	lvlTxt.text = lvl / 10 + 1
-	transition.to( lvlTxt, { time = 500, delay = 0, alpha = 1 })
-	
 end
 
-complete:addEventListener( "touch", nextLevel )
-
-local function createBoard()
-	
+local function addListeners( )
 	local row; local col;
 	
 	for row = 1, rowsize do
 		for col = 1, colsize do
-			--local b = display.newImage("blocksmall.png")
+			board[(row - 1) * rowsize + col]:addEventListener( "touch", blockTouch )		
+		end
+	end	
+end
+
+local function createBoard( )
+	local row; local col;
+	
+	for row = 1, rowsize do
+		for col = 1, colsize do
+
 			local b = display.newRect(0, 0, 34, 34)
 
 			b.x = (col-1) * bw / rowsize + pan
@@ -273,14 +314,20 @@ local function createBoard()
 			
 			b.alpha = 0
 
+			local ca = 0
+
 			if (lvlArray[lvl]:sub(row + (col - 1) * rowsize, row + (col - 1) * rowsize) == "1") then
-				transition.to(b, { time = 1500, alpha = 1 } )
+				ca = 1
 			else
-				transition.to(b, { time = 1500, alpha = .2 } )
+				ca = .2
 			end
-			
-			--b.width = bw; b.height = bh;
-			b:addEventListener( "touch", blockTouch )
+
+			if ( row < rowsize and col < colsize ) then
+				transition.to(b, { time = 1500, alpha = ca } )
+			else
+				transition.to(b, { time = 1500, alpha = ca, onComplete = addListeners })
+			end
+
 			board[ #board + 1 ] = b
 
 			transition.to( lvlTxt, { time = 500, delay = 0, alpha = 1 })			
@@ -330,25 +377,22 @@ local function newGameClicked ( event )
 	if ( event.phase == "began" ) then
 		transition.to( new, { time = 1200, alpha = 0 })
 		transition.to( tut, { time = 1200, alpha = 0 })
-		transition.to( highs, { time = 1200, alpha = 0 })
+		transition.to( settings, { time = 1200, alpha = 0 })
 		transition.to( head, { time = 1200, alpha = 0, onComplete = createBoard })
 		transition.to( restart, { time = 1200, alpha = 1 })
+
 	end
-	
-	print (event.phase)
 end
 
 local function showTutorials ( event )
 	if ( event.phase == "began" ) then
-		showTut = true;
-		print("tutorial")
+
 	end
 end
 
-local function showHighScores ( event )
+local function showSettings ( event )
 	if ( event.phase == "began" ) then
-		showScores = true;
-		print("scores")
+
 	end
 end
 
@@ -358,8 +402,12 @@ new:addEventListener("touch", newGameClicked )
 
 tut:addEventListener("touch", showTutorials )
 
-highs:addEventListener("touch", showHighScores )
+settings:addEventListener("touch", showSettings )
 
 Runtime:addEventListener( "enterFrame", frame )
+
+complete:addEventListener( "touch", nextLevel )
+
+restart:addEventListener( "touch", restartLevel )
 
 
