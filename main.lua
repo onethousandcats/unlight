@@ -75,6 +75,21 @@ if ( theme == "dark" ) then
 	)
 end
 
+--sounds
+
+audio.setVolume(.1)
+
+local touchSounds = {}
+
+touchSounds[ 1 ] = audio.loadSound("one.m4a")
+touchSounds[ 2 ] = audio.loadSound("two.m4a") 
+touchSounds[ 3 ] = audio.loadSound("three.m4a")
+touchSounds[ 4 ] = audio.loadSound("four.m4a")
+
+local curSound = 1;
+
+--end
+
 local background = display.newRect(0, 0, w, h)
 background:setFillColor(g)
 openScreen:insert( background, true)
@@ -221,10 +236,13 @@ end
 local function blockTouch ( event )
 	if ( event.phase == "began" ) then
 
+		--play sound
+		local touchChannel = audio.play( touchSounds[ curSound ] )
+
 		local b = event.target
 		bx = (event.target.x - pan) * rowsize / bw + 1
 		by = (event.target.y - top - pan) * colsize / bw + 1
-		
+
 		index = bx + (by - 1) * rowsize
 		iu = bx + (by - 2) * rowsize
 		id = bx + by * rowsize
@@ -276,6 +294,13 @@ local function blockTouch ( event )
 			transition.to( complete, { time = 1000, alpha = 1 })
 		end
 	end
+
+	if (event.phase == "ended" or event.phase == "cancelled") then
+		curSound = curSound + 1
+
+		if curSound > 5 then curSound = 1 end
+	end
+
 end
 
 local function restartLevel ( event )
