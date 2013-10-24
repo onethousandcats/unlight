@@ -93,21 +93,21 @@ local curSound = 1;
 local background = display.newRect(0, 0, w, h)
 background:setFillColor(g)
 openScreen:insert( background, true)
-background.x = 160; background.y = 240
+background.x = w/2; background.y = h/2
 background.width = w; background.height = h;
 
 local titleScreen = display.newGroup()
 
-local title = display.newText("unlight", w / 2, 160, "Infinity", 72)
-local touch = display.newText("touch to start", 160, 300, "Infinity", 24)
+local title = display.newText("unlight", w / 2, w / 2, "Infinity", 72)
+local touch = display.newText("touch to start", w / 2, 300, "Infinity", 24)
 local q = display.newImage("block.png")
 
 titleScreen:insert( title, true )
 titleScreen:insert( touch, true )
 titleScreen:insert( q, true )
-title.x = 160; title.y = 160; 
-touch.x = 160; touch.y = 300; touch.alpha = 0;
-q.x = 160; q.y = 240;
+title.x = w / 2; title.y = h * .3; 
+touch.x = w / 2; touch.y = h * .6; touch.alpha = 0;
+q.x = w / 2; q.y = h / 2;
 
 local head = display.newImage("block.png")		
 titleScreen:insert( head , true )
@@ -121,11 +121,11 @@ local new = display.newText("new game", w / 2, 230, "Infinity", 36)
 titleScreen:insert( new , true )
 new.x = w / 2; new.y = cont.y + 50; new.alpha = 0;
 	
-local tut = display.newText("tutorial", 160, 300, "Infinity", 36)
+local tut = display.newText("tutorial", w / 2, 300, "Infinity", 36)
 titleScreen:insert( tut , true )
 tut.x = w / 2; tut.y = new.y + 50; tut.alpha = 0;
 
-local settings = display.newText("settings", 160, 300, "Infinity", 36)		
+local settings = display.newText("settings", w / 2, 300, "Infinity", 36)		
 titleScreen:insert( settings , true )
 settings.x = w / 2; settings.y = tut.y + 50; settings.alpha = 0;
 
@@ -138,7 +138,7 @@ lvlTxt.alpha = 0;
 
 local timer = display.newRect(0, 0, 220, 10)
 titleScreen:insert( timer, true )
-timer.x, timer.y, timer.alpha = 160, 90, 0
+timer.x, timer.y, timer.alpha = w / 2, 90, 0
 
 local menu = display.newText( "menu", w / 2, 50, "Infinity", 24)
 menu.alpha = 0; menu.x = w / 2;
@@ -153,11 +153,11 @@ local thm = display.newText("theme", w / 2, 230, "Infinity", 36)
 titleScreen:insert( thm , true )
 thm.x = w / 2; thm.y = 210; thm.alpha = 0;
 
-local sounds = display.newText("sounds", 160, 300, "Infinity", 36)
+local sounds = display.newText("sounds", w / 2, 300, "Infinity", 36)
 titleScreen:insert( sounds , true )
 sounds.x = w / 2; sounds.y = thm.y + 50; sounds.alpha = 0;
 
-local ret = display.newText("return", 160, 300, "Infinity", 36)		
+local ret = display.newText("return", w / 2, 300, "Infinity", 36)		
 titleScreen:insert( ret , true )
 ret.x = w / 2; ret.y = sounds.y + 50; ret.alpha = 0;
 
