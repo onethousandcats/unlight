@@ -241,7 +241,7 @@ local function blockTouch ( event )
 	if ( event.phase == "began" ) then
 
 		--play sound
-		local touchChannel = audio.play( touchSounds[ curSound ] )
+		--local touchChannel = audio.play( touchSounds[ curSound ] )
 
 		local b = event.target
 		bx = (event.target.x - pan) * rowsize / bw + 1
@@ -281,7 +281,7 @@ local function blockTouch ( event )
 
 			--record level in log
 			local f = io.open( currentInfo, "w" )
-			f:write( lvl, "\n" )
+			f:write( lvl + 1, "\n" )
 			f:write( theme )
 
 			io.close( f )
@@ -304,7 +304,6 @@ local function blockTouch ( event )
 
 		if curSound > 5 then curSound = 1 end
 	end
-
 end
 
 local function restartLevel ( event )
@@ -339,7 +338,8 @@ local function nextLevel ( event )
 		end
 
 		transition.to( complete, { time = 1200, alpha = 0 })
-		lvl = lvl + 1;
+		lvl = lvl + 1
+		savedLvl = lvl
 		
 		local row; local col;
 		
@@ -390,8 +390,6 @@ local function showLevel( event )
 	transition.to( lvlTxt, { time = 500, delay = 0, alpha = 1 })
 	transition.to( menu, { time = 500, delay = 0, alpha = 1 })
 	transition.to( restart, { time = 500, delay = 0, alpha = 1 })	
-
-
 end
 
 
@@ -439,7 +437,6 @@ local function createBoard( )
 			transition.to( restart, { time = 1500, delay = 0, alpha = 1 })		
 		end
 	end
-
 end
 
 local aStep = 0
@@ -467,8 +464,7 @@ function frame:enterFrame( event )
 	end
 
 	head:rotate(3)
-	restart:rotate(1)
-	
+	restart:rotate(1)	
 end
 
 local function onTouch ( event )
@@ -573,7 +569,7 @@ end
 local function continueClicked ( event )
 	if ( event.phase == "began" ) then
 
-		lvl = savedLvl + 1
+		lvl = savedLvl
 		lvlTxt.text = lvl / 10 + 1
 
 		transition.to( cont, { time = 1200, alpha = 0 })
@@ -585,6 +581,106 @@ local function continueClicked ( event )
 		else
 			transition.to( head, { time = 1200, alpha = 0, onComplete = showLevel })
 		end
+	end
+end
+
+local function tutorialToMain ( event )
+	if ( event.phase == "began" ) then
+
+		for row = 1, 3 do
+			for col = 1, 3 do
+				tb[(row - 1) * 3 + col]:removeSelf()
+			end
+		end
+
+		transition.to( event.target, { time = 1000, alpha = 0 })
+
+		if ( savedLvl > 0 ) then transition.to( cont, { time = 1400, alpha = 1 }) end
+		transition.to( new, { time = 1400, alpha = 1 })
+		transition.to( tut, { time = 1400, alpha = 1 })
+		transition.to( settings, { time = 1400, alpha = 1 })
+		transition.to( head, { time = 1400, delay = 500, alpha = 1 })
+
+		tutLvl = 1
+	end
+end
+
+local function tutorialEndPuzzleInterim ( event )
+	if ( event.phase == "began" ) then
+		for _,b in ipairs( tb ) do
+			transition.to( b, { time = 400, alpha = .2 })
+			transition.to( b, { time = 1000, alpha = 0, delay = 600 })
+		end
+
+		local comp = display.newText("go forth and unlight", w / 2, h / 2, "Infinity", 32, "center" )
+		comp.alpha = 0; comp.x = w / 2;
+
+		transition.to( comp, { time = 1800, delay = 2000, alpha = 1 })
+		comp:addEventListener( "touch", tutorialToMain )
+	end
+end
+
+local function tutFirstTouch ( event )
+	if ( event.phase == "began" ) then
+
+		local b = event.target
+
+		b:removeEventListener( "touch", tutFirstTouch )
+		tb[(2 - 1) * 3 + 3]:addEventListener("touch", tutorialEndPuzzleInterim )
+		
+		toggle(b)
+
+		toggle(tb[(2 - 1) * 3 + 3])
+		toggle(tb[(3 - 1) * 3 + 2])
+		toggle(tb[(1 - 1) * 3 + 2])
+		toggle(tb[(2 - 1) * 3 + 1])
+		
+	end
+end
+
+local function tutorialThirdPuzzle ( event )
+	if ( event.phase == "began" ) then
+
+        transition.to( event.target, { time = 1000, alpha = 0 })
+
+		tutLvl = tutLvl + 1
+
+		for row = 1, 3 do
+			for col = 1, 3 do
+				local ca = 0
+
+				if (tutArray[tutLvl]:sub(row + (col - 1) * 3, row + (col - 1) * 3) == "1") then
+					ca = 1
+				else
+					ca = .2
+				end
+
+				transition.to(tb[(row - 1) * 3 + col], { time = 1500, alpha = ca } )
+
+				if ( row == 2 and col == 2 ) then
+					tb[(row - 1) * 3 + col]:addEventListener( "touch", tutFirstTouch )
+				end
+			end
+		end		
+	end
+end
+
+local function tutorialThirdPuzzleInterim ( event )
+	if ( event.phase == "began" ) then
+		
+		event.target:removeEventListener( "touch", tutorialThirdPuzzleInterim )
+
+		for _,b in ipairs( tb ) do
+			transition.to( b, { time = 400, alpha = .2 })
+			transition.to( b, { time = 1000, alpha = 0, delay = 600 })
+		end
+
+		local comp = display.newText("great, one last test", w / 2, h / 2, "Infinity", 32, "center" )
+		comp.alpha = 0; comp.x = w / 2;
+
+		transition.to( comp, { time = 1800, delay = 2000, alpha = 1 })
+		comp:addEventListener( "touch", tutorialThirdPuzzle )
+
 	end
 end
 
@@ -606,6 +702,10 @@ local function tutorialSecondPuzzle ( event )
 				end
 
 				transition.to(tb[(row - 1) * 3 + col], { time = 1500, alpha = ca } )
+
+				if ( row == 2 and col == 3 ) then
+					tb[(row - 1) * 3 + col]:addEventListener( "touch", tutorialThirdPuzzleInterim )
+				end
 			end
 		end
 	end
@@ -614,6 +714,8 @@ end
 local function tutorialFirstPuzzle ( event )
 	if ( event.phase == "began" ) then
 		
+		event.target:removeEventListener( "touch", tutorialFirstPuzzle )
+
 		for _,b in ipairs( tb ) do
 			transition.to( b, { time = 400, alpha = .2 })
 			transition.to( b, { time = 1000, alpha = 0, delay = 600 })
