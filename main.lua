@@ -136,6 +136,10 @@ restart.x = 60; restart.y = 64; restart.alpha = 0;
 local lvlTxt = display.newText( lvl / 10 + 1, w - 70, 50, "Infinity", 24)
 lvlTxt.alpha = 0;
 
+local timer = display.newRect(0, 0, 220, 10)
+titleScreen:insert( timer, true )
+timer.x, timer.y, timer.alpha = 160, 90, 0
+
 local menu = display.newText( "menu", w / 2, 50, "Infinity", 24)
 menu.alpha = 0; menu.x = w / 2;
 

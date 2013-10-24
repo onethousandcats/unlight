@@ -3,15 +3,83 @@
 	{
 		"selected_items":
 		[
+			[
+				"tutorial",
+				"tutorialFirstPuzzle"
+			],
+			[
+				"he",
+				"height"
+			],
+			[
+				"set",
+				"setFillColor"
+			],
+			[
+				"add",
+				"addEventListener"
+			],
+			[
+				"return",
+				"returnToMenu"
+			],
+			[
+				"contin",
+				"continueClicked"
+			],
+			[
+				"remo",
+				"removeListeners"
+			],
+			[
+				"remve",
+				"removeListeners"
+			],
+			[
+				"curre",
+				"currentInfo"
+			],
+			[
+				"pat",
+				"pathForFile"
+			],
+			[
+				"curr",
+				"currentInfo"
+			],
+			[
+				"tit",
+				"titleComplete"
+			],
+			[
+				"compl",
+				"removeComplete"
+			],
+			[
+				"rem",
+				"removeSelf"
+			],
+			[
+				"sys",
+				"systemFont"
+			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "levels.txt",
+			"file": "main.lua",
 			"settings":
 			{
-				"buffer_size": 51,
+				"buffer_size": 17757,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "current.txt",
+			"settings":
+			{
+				"buffer_size": 6,
 				"line_ending": "Windows"
 			}
 		}
@@ -40,11 +108,15 @@
 	},
 	"file_history":
 	[
-		"/Users/foil/Desktop/unlight/build.settings"
+		"/C/Users/Phillip.Bercot/Documents/GitHub/unlight/current.txt",
+		"/C/Users/Phillip.Bercot/Documents/GitHub/unlight/levels.txt",
+		"/C/Users/Phillip.Bercot/Documents/GitHub/unlight/tutorial.txt",
+		"/C/Users/Phillip.Bercot/Documents/GitHub/unlight/build.settings",
+		"/C/Users/Phillip.Bercot/Documents/GitHub/unlight/main.lua"
 	],
 	"find":
 	{
-		"height": 0.0
+		"height": 34.0
 	},
 	"find_in_files":
 	{
@@ -58,6 +130,15 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"transition.to( restart",
+			"transition.to( lvlTxt",
+			"lvltxt",
+			"io",
+			"transition",
+			"highs",
+			"touch",
+			"touchAlphaDec",
+			"touch"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -75,14 +156,42 @@
 	"groups":
 	[
 		{
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "levels.txt",
+					"file": "main.lua",
 					"settings":
 					{
-						"buffer_size": 51,
+						"buffer_size": 17757,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1264,
+								1184
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 810.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "current.txt",
+					"settings":
+					{
+						"buffer_size": 6,
 						"regions":
 						{
 						},
@@ -157,7 +266,7 @@
 		[
 			[
 				"",
-				"/Users/foil/Desktop/invaders/Invaders/invaders.sublime-project"
+				"/C/Users/Phillip.Bercot/Documents/Corona Projects/a_serpent/a_serpent.sublime-project"
 			]
 		],
 		"width": 380.0
@@ -166,6 +275,6 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 150.0,
+	"side_bar_width": 208.0,
 	"status_bar_visible": true
 }
