@@ -337,31 +337,31 @@ local function gameEnded ( event )
 	local congrats = display.newText("congratulations", 20, 70, "Infinity", 40, "left" )
 	congrats.alpha = 0;
 
-	local info = display.newText("Free beta testing phase now completed.", 20, 140, "Infinity", 18, "left" )
+	local info = display.newText("Human testing cycle fulfilled.", 20, 140, "Infinity", 18, "left" )
 	info.alpha = 0; 
 
-	local info1 = display.newText("Anticipate the alpha version release,", 20, 170, "Infinity", 18, "left" )
+	local info1 = display.newText("Expectations were exceeded by user...", 20, 170, "Infinity", 18, "left" )
 	info1.alpha = 0; 
 
-	local info2 = display.newText("with following additional components:", 20, 200, "Infinity", 18, "left" )
+	local info2 = display.newText("Metrics:", 20, 200, "Infinity", 18, "left" )
 	info2.alpha = 0; 
 
 	local s1 = display.newRect(0, 0, 6, 6)
 	s1.x, s1.y, s1.alpha = 40, 260, 0
 
-	local t1 = display.newText("100+ levels", 52, 253, "Infinity", 16, "left" )
+	local t1 = display.newText("Score", 52, 253, "Infinity", 16, "left" )
 	t1.alpha = 0;
 
 	local s2 = display.newRect(0, 0, 6, 6)
 	s2.x, s2.y, s2.alpha = 40, 290, 0
 
-	local t2 = display.newText("Scoring mechanisms", 52, 283, "Infinity", 16, "left" )
+	local t2 = display.newText("Average Time", 52, 283, "Infinity", 16, "left" )
 	t2.alpha = 0;
 
 	local s3 = display.newRect(0, 0, 6, 6)
 	s3.x, s3.y, s3.alpha = 40, 320, 0
 
-	local t3 = display.newText("Various playmodes", 52, 313, "Infinity", 16, "left" )
+	local t3 = display.newText("Lapsed Time", 52, 313, "Infinity", 16, "left" )
 	t3.alpha = 0;
 
 	local s4 = display.newRect(0, 0, 6, 6)
