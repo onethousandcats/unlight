@@ -334,7 +334,7 @@ local function gameEnded ( event )
 	lvl = 1
 	savedLvl = lvl
 
-	local congrats = display.newText("congratulations", 20, 70, "Infinity", 40, "left" )
+	local congrats = display.newText("Status:945730 : Killscreen Reached", 10, 70, "Infinity", 24, "left" )
 	congrats.alpha = 0;
 
 	local info = display.newText("Human testing cycle fulfilled.", 20, 140, "Infinity", 18, "left" )
