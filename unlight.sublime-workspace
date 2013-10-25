@@ -4,6 +4,30 @@
 		"selected_items":
 		[
 			[
+				"game",
+				"gameEnded"
+			],
+			[
+				"congra",
+				"congrats"
+			],
+			[
+				"lvl",
+				"lvlArray"
+			],
+			[
+				"tut",
+				"tutBoard"
+			],
+			[
+				"rem",
+				"removeEventListener"
+			],
+			[
+				"remove",
+				"removeSelf"
+			],
+			[
 				"tutorial",
 				"tutorialFirstPuzzle"
 			],
@@ -56,10 +80,6 @@
 				"removeComplete"
 			],
 			[
-				"rem",
-				"removeSelf"
-			],
-			[
 				"sys",
 				"systemFont"
 			]
@@ -71,7 +91,15 @@
 			"file": "main.lua",
 			"settings":
 			{
-				"buffer_size": 17757,
+				"buffer_size": 22619,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "tutorial.txt",
+			"settings":
+			{
+				"buffer_size": 35,
 				"line_ending": "Windows"
 			}
 		},
@@ -79,7 +107,23 @@
 			"file": "current.txt",
 			"settings":
 			{
-				"buffer_size": 6,
+				"buffer_size": 7,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "levels.txt",
+			"settings":
+			{
+				"buffer_size": 259,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "levels.txt.old",
+			"settings":
+			{
+				"buffer_size": 290,
 				"line_ending": "Windows"
 			}
 		}
@@ -130,6 +174,19 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"nextLevel",
+			"lvl",
+			"saved",
+			"conti",
+			"io.open",
+			"menu",
+			"tutLvl",
+			"tutArray",
+			"bw",
+			"tutLvl",
+			"frame",
+			"board",
+			"]\n",
 			"transition.to( restart",
 			"transition.to( lvlTxt",
 			"lvltxt",
@@ -156,7 +213,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -164,15 +221,15 @@
 					"file": "main.lua",
 					"settings":
 					{
-						"buffer_size": 17757,
+						"buffer_size": 22619,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1264,
-								1184
+								8586,
+								8586
 							]
 						],
 						"settings":
@@ -181,24 +238,102 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 810.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "current.txt",
+					"file": "tutorial.txt",
 					"settings":
 					{
-						"buffer_size": 6,
+						"buffer_size": 35,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
+								29,
+								29
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "current.txt",
+					"settings":
+					{
+						"buffer_size": 7,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1,
+								1
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "levels.txt",
+					"settings":
+					{
+						"buffer_size": 259,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								259,
+								259
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "levels.txt.old",
+					"settings":
+					{
+						"buffer_size": 290,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								259,
 								0
 							]
 						],
@@ -221,7 +356,7 @@
 	},
 	"input":
 	{
-		"height": 0.0
+		"height": 31.0
 	},
 	"layout":
 	{

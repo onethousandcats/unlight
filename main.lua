@@ -42,6 +42,9 @@ end
 local w = display.viewableContentWidth
 local h = display.viewableContentHeight
 
+local dw = display.pixelWidth
+local dh = display.pixelHeight
+
 local frame = {
 	container = display.newRect( 0, 0, w, h ),
 	reflectX = true,
@@ -90,11 +93,11 @@ local curSound = 1;
 
 --end
 
-local background = display.newRect(0, 0, w, h)
+local background = display.newRect(0, 0, dw, dh)
 background:setFillColor(g)
 openScreen:insert( background, true)
-background.x = w/2; background.y = h/2
-background.width = w; background.height = h;
+background.x = dw/2; background.y = dh/2
+background.width = dw; background.height = dh;
 
 local titleScreen = display.newGroup()
 
